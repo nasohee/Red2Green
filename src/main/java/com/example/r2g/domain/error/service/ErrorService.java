@@ -1,5 +1,6 @@
 package com.example.r2g.domain.error.service;
 
+import com.example.r2g.domain.error.dto.ErrorDetailResponse;
 import com.example.r2g.domain.error.dto.ErrorRequest;
 import com.example.r2g.domain.error.dto.ErrorResponse;
 import com.example.r2g.domain.error.entity.ErrorLog;
@@ -8,6 +9,7 @@ import com.example.r2g.domain.user.entity.User;
 import com.example.r2g.domain.user.repository.UserRepository;
 import com.example.r2g.global.exception.CustomException;
 import com.example.r2g.global.exception.ErrorCode;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,8 +48,9 @@ public class ErrorService {
 
     }
 
+
     /**
-     * 에러 단건 조회하기
+     * 에러 로그 목록 조회하기
      * */
     @Transactional(readOnly = true)
     public List<ErrorResponse> getErrors(){
@@ -56,4 +59,29 @@ public class ErrorService {
                 .map(ErrorResponse::from)
                 .toList();
     }
+
+    /**
+     * 에러 로그 상세 조회하기
+     * */
+    @Transactional(readOnly = true)
+    public ErrorDetailResponse getErrorDetail(Long id){
+
+        ErrorLog error = findErrorById(id);
+
+        return ErrorDetailResponse.from(error);
+
+    }
+
+    private ErrorLog findErrorById(Long id) {
+        return errorRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.ERROR_NOT_FOUND));
+    }
+
+    private String extractErrorType(String message) {
+        if (message.contains("NullPointerException")) return "NullPointerException";
+        if (message.contains("DataIntegrityViolationException")) return "DataIntegrityViolationException";
+        if (message.contains("TypeError")) return "TypeError";
+        return "UNKNOWN";
+    }
+
 }

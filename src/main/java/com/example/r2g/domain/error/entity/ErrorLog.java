@@ -37,6 +37,9 @@ public class ErrorLog extends BaseEntity {
     @Column(length = 50)
     private String language;
 
+    // 에러의 종류
+    private String errorType;
+
     // 프레임워크 단위 분류 (Spring 등)
     @Column(length = 50)
     private String framework;

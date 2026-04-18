@@ -1,5 +1,6 @@
 package com.example.r2g.domain.error.controller;
 
+import com.example.r2g.domain.error.dto.ErrorDetailResponse;
 import com.example.r2g.domain.error.dto.ErrorRequest;
 import com.example.r2g.domain.error.dto.ErrorResponse;
 import com.example.r2g.domain.error.service.ErrorService;
@@ -40,6 +41,16 @@ public class ErrorController {
         List<ErrorResponse> list = errorService.getErrors();
 
         return ApiResponse.success(list);
+    }
+
+    /**
+     * 에러 로그 상세 조회 API
+     * GET /errors/{errorId}
+     */
+    @GetMapping("/{errorId}")
+    public ApiResponse<ErrorDetailResponse> getErrorDetail(@PathVariable Long errorId){
+        ErrorDetailResponse response = errorService.getErrorDetail(errorId);
+        return ApiResponse.success(response);
     }
 
 
