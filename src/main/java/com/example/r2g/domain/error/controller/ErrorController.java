@@ -27,11 +27,8 @@ public class ErrorController {
      */
     @PostMapping
     public ApiResponse<ErrorResponse> createError(@RequestBody @Valid ErrorRequest request) {
-        // 임시 유저
-        User user = userRepository.save(
-                User.builder()
-                        .email("test@test.com").nickname("test").password("1234").build()
-        );
+       //TODO : Security 연동
+        User user = null;
         ErrorResponse response = errorService.createError(request, user);
 
         return ApiResponse.success(response);
