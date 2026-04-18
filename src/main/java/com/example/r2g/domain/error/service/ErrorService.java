@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -20,12 +22,14 @@ public class ErrorService {
     private final ErrorRepository errorRepository;
     private final UserRepository userRepository;
 
+    private static final String GUEST = "GUEST";
+
     /**
      * 에러 등록하기
      * */
     public ErrorResponse createError(ErrorRequest request, User user){
 
-        User owner = (user != null) ? user : userRepository.findByNickname("GUEST")
+        User owner = (user != null) ? user : userRepository.findByNickname(GUEST)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         ErrorLog error = ErrorLog.builder()
@@ -40,5 +44,16 @@ public class ErrorService {
         errorRepository.save(error);
         return ErrorResponse.from(error);
 
+    }
+
+    /**
+     * 에러 단건 조회하기
+     * */
+    @Transactional(readOnly = true)
+    public List<ErrorResponse> getErrors(){
+        return errorRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(ErrorResponse::from)
+                .toList();
     }
 }

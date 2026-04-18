@@ -1,7 +1,6 @@
 package com.example.r2g.domain.error.dto;
 
 import com.example.r2g.domain.error.entity.ErrorLog;
-import com.example.r2g.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,7 +22,7 @@ public class ErrorResponse {
                 error.getRawMessage(),
                 error.getLanguage(),
                 error.getFramework(),
-                error.getCreateAt()
+                error.getCreatedAt()
         );
     }
 }

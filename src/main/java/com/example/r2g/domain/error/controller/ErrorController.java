@@ -4,14 +4,12 @@ import com.example.r2g.domain.error.dto.ErrorRequest;
 import com.example.r2g.domain.error.dto.ErrorResponse;
 import com.example.r2g.domain.error.service.ErrorService;
 import com.example.r2g.domain.user.entity.User;
-import com.example.r2g.domain.user.repository.UserRepository;
 import com.example.r2g.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/errors")
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ErrorController {
 
     private final ErrorService errorService;
-    private final UserRepository userRepository;
 
     /**
      * 에러 로그 생성 API
@@ -33,5 +30,17 @@ public class ErrorController {
 
         return ApiResponse.success(response);
     }
+
+    /**
+     * 에러 로그 목록 조회 API
+     * GET /errors
+     */
+    @GetMapping
+    public ApiResponse<List<ErrorResponse>> getErrors(){
+        List<ErrorResponse> list = errorService.getErrors();
+
+        return ApiResponse.success(list);
+    }
+
 
 }
