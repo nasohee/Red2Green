@@ -53,5 +53,15 @@ public class ErrorController {
         return ApiResponse.success(response);
     }
 
+    /**
+     * 에러 로그 삭제 API
+     * DELETE /errors/{errorId}
+     */
+    @DeleteMapping("/{errorId}")
+    public ApiResponse<Void> deleteError(@PathVariable Long errorId){
+        errorService.deleteError(errorId);
+        return ApiResponse.success(null);
+    }
+
 
 }

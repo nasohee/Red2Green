@@ -72,6 +72,17 @@ public class ErrorService {
 
     }
 
+    /**
+     * 에러 로그 삭제하기
+     * */
+    public void deleteError(Long id){
+        ErrorLog error = findErrorById(id);
+
+        // TODO : 삭제 권한 확인
+
+        errorRepository.delete(error);
+    }
+
     private ErrorLog findErrorById(Long id) {
         return errorRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ERROR_NOT_FOUND));
