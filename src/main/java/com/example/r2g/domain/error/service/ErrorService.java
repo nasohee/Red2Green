@@ -10,13 +10,13 @@ import com.example.r2g.domain.user.entity.User;
 import com.example.r2g.domain.user.repository.UserRepository;
 import com.example.r2g.global.exception.CustomException;
 import com.example.r2g.global.exception.ErrorCode;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.View;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +26,18 @@ public class ErrorService {
     private final ErrorRepository errorRepository;
     private final UserRepository userRepository;
 
-    private static final String GUEST = "GUEST";
-    private final View error;
+    private static final String GUEST_EMAIL = "guest@red2green.local";
 
     /**
      * 에러 등록하기
      * */
     public ErrorResponse createError(ErrorRequest request, User user){
 
-        User owner = (user != null) ? user : userRepository.findByNickname(GUEST)
+        User owner = (user != null) ? user : userRepository.findByEmail(GUEST_EMAIL)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+
+        String errorType = extractErrorType(request.getRawMessage());
 
         ErrorLog error = ErrorLog.builder()
                 .user(owner)
@@ -44,6 +46,7 @@ public class ErrorService {
                 .normalizedMessage(request.getRawMessage())
                 .language(request.getLanguage())
                 .framework(request.getFramework())
+                .errorType(errorType)
                 .build();
 
         errorRepository.save(error);
@@ -79,11 +82,8 @@ public class ErrorService {
      * 에러 로그 삭제하기
      * */
     public void deleteError(Long id){
-        ErrorLog error = findErrorById(id);
-
-        // TODO : 삭제 권한 확인
-
-        errorRepository.delete(error);
+        // TODO: Security 연동 후 로그인 사용자와 에러 로그 작성자가 일치하는지 검증한 뒤 삭제 허용
+        throw new CustomException(ErrorCode.UNAUTHORIZED);
     }
 
     /**
@@ -99,6 +99,29 @@ public class ErrorService {
     private ErrorLog findErrorById(Long id) {
         return errorRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ERROR_NOT_FOUND));
+    }
+
+    // TODO : 추후 AI 또는 정교한 파싱 로직을 적용해 에러 타입 추출 정확도 개선
+    private String extractErrorType(String rawMessage) {
+        if (rawMessage == null || rawMessage.isBlank()) {
+            return "UNKNOWN";
+        }
+
+        Pattern pattern = Pattern.compile("([a-zA-Z0-9_$.]+Exception|[a-zA-Z0-9_$.]+Error)");
+        Matcher matcher = pattern.matcher(rawMessage);
+
+        if (matcher.find()) {
+            String fullName = matcher.group(1);
+
+            int lastDotIndex = fullName.lastIndexOf(".");
+            if (lastDotIndex != -1) {
+                return fullName.substring(lastDotIndex + 1);
+            }
+
+            return fullName;
+        }
+
+        return "UNKNOWN";
     }
 
 

@@ -51,11 +51,14 @@ public class ErrorLog extends BaseEntity {
 
 
     // 생성 메서드
-    public static ErrorLog create(User user, String rawMessage, String normalizedMessage) {
+    public static ErrorLog create(User user, String rawMessage, String normalizedMessage, String language, String framework, String errorType) {
         return ErrorLog.builder()
                 .user(user)
                 .rawMessage(rawMessage)
                 .normalizedMessage(normalizedMessage)
+                .language(language)
+                .framework(framework)
+                .errorType(errorType)
                 .build();
     }
 }
