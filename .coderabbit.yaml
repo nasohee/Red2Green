@@ -1,0 +1,16 @@
+language: "ko-KR"
+
+tone_instructions: |
+  코드 리뷰는 한국어로 작성해줘.
+  초보 개발자도 이해할 수 있게 친절하게 설명해줘.
+  문제점만 말하지 말고, 왜 문제인지와 어떻게 고치면 좋은지도 함께 알려줘.
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
