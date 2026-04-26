@@ -3,6 +3,7 @@ package com.example.r2g.domain.error.controller;
 import com.example.r2g.domain.error.dto.ErrorDetailResponse;
 import com.example.r2g.domain.error.dto.ErrorRequest;
 import com.example.r2g.domain.error.dto.ErrorResponse;
+import com.example.r2g.domain.error.dto.ErrorSearchCondition;
 import com.example.r2g.domain.error.service.ErrorService;
 import com.example.r2g.domain.user.entity.User;
 import com.example.r2g.global.common.ApiResponse;
@@ -63,5 +64,14 @@ public class ErrorController {
         return ApiResponse.success(null);
     }
 
+    /**
+     * 에러 검색 API
+     * GET /errors/search
+     */
+    @GetMapping("/search")
+    public ApiResponse<List<ErrorResponse>> search(ErrorSearchCondition condition){
+        List<ErrorResponse> response = errorService.searchErrors(condition);
+        return ApiResponse.success(response);
+    }
 
 }

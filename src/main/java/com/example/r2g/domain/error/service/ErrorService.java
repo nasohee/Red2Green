@@ -3,6 +3,7 @@ package com.example.r2g.domain.error.service;
 import com.example.r2g.domain.error.dto.ErrorDetailResponse;
 import com.example.r2g.domain.error.dto.ErrorRequest;
 import com.example.r2g.domain.error.dto.ErrorResponse;
+import com.example.r2g.domain.error.dto.ErrorSearchCondition;
 import com.example.r2g.domain.error.entity.ErrorLog;
 import com.example.r2g.domain.error.repository.ErrorRepository;
 import com.example.r2g.domain.user.entity.User;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.View;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class ErrorService {
     private final UserRepository userRepository;
 
     private static final String GUEST = "GUEST";
+    private final View error;
 
     /**
      * 에러 등록하기
@@ -37,7 +40,7 @@ public class ErrorService {
         ErrorLog error = ErrorLog.builder()
                 .user(owner)
                 .rawMessage(request.getRawMessage())
-                // TODO : 나중에 록 정제 로직
+                // TODO : 나중에 로그 정제 로직
                 .normalizedMessage(request.getRawMessage())
                 .language(request.getLanguage())
                 .framework(request.getFramework())
@@ -83,16 +86,20 @@ public class ErrorService {
         errorRepository.delete(error);
     }
 
+    /**
+     * 에러 로그 검색하기
+     * */
+    public List<ErrorResponse> searchErrors(ErrorSearchCondition condition){
+        return errorRepository.search(condition)
+                .stream()
+                .map(ErrorResponse::from)
+                .toList();
+    }
+
     private ErrorLog findErrorById(Long id) {
         return errorRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ERROR_NOT_FOUND));
     }
 
-    private String extractErrorType(String message) {
-        if (message.contains("NullPointerException")) return "NullPointerException";
-        if (message.contains("DataIntegrityViolationException")) return "DataIntegrityViolationException";
-        if (message.contains("TypeError")) return "TypeError";
-        return "UNKNOWN";
-    }
 
 }

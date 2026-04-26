@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ErrorRepository extends JpaRepository<ErrorLog, Long> {
+public interface ErrorRepository extends JpaRepository<ErrorLog, Long>, ErrorRepositoryCustom  {
 
     List<ErrorLog> findAllByOrderByCreatedAtDesc();
 }
