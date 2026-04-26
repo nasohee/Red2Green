@@ -19,7 +19,11 @@ public enum ErrorCode {
     ERROR_NOT_FOUND(HttpStatus.NOT_FOUND, "4040", "해당 에러를 찾을 수 없습니다."),
 
     // User
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "4041", "사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "4041", "사용자를 찾을 수 없습니다."),
+
+    // Auth
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "4010", "인증이 필요합니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "4030", "접근 권한이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
